@@ -24,6 +24,7 @@ Deno.serve(async (req) => {
     'Content-Type': 'application/json',
     ...corsHeaders
   });
+  
   if (!supabaseUrl || !supabaseAnonKey) {
     return new Response(
       JSON.stringify({
@@ -129,27 +130,27 @@ Deno.serve(async (req) => {
       temperature: 0,
       stream: true,
     });
-const stream = OpenAIStream(completionStream);
-const streamResponse = new StreamingTextResponse(stream);
-
-// Add CORS headers to the streaming response
-Object.entries(corsHeaders).forEach(([key, value]) => {
-  streamResponse.headers.set(key, value);
-});
-
-return streamResponse;
-} catch (error) {
-console.error('OpenAI API error:', error);
-return new Response(
-  JSON.stringify({
-    error: 'Error generating completion',
-    details: error instanceof Error ? error.message : String(error)
-  }),
-  {
-    status: 500,
-    headers
-  }
-);
-}
+    
+    const stream = OpenAIStream(completionStream);
+    const streamResponse = new StreamingTextResponse(stream);
+    
+    // Add CORS headers to the streaming response
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      streamResponse.headers.set(key, value);
+    });
+    
+    return streamResponse;
+  } catch (error) {
+    console.error('OpenAI API error:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'Error generating completion',
+        details: error instanceof Error ? error.message : String(error)
+      }),
+      {
+        status: 500,
+        headers
+      }
+    );
   }
 });
