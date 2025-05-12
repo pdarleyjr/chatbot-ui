@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "name": "chatbot-ui",
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "outputDirectory": ".next",
+  "github": {
+    "enabled": true,
+    "silent": false
+  },
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "https://uloayyhcpjmxljbhfysg.supabase.co",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsb2F5eWhjcGpteGxqYmhmeXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDU4NDUsImV4cCI6MjA2MTAyMTg0NX0.qED8NMgurHVBxQYz3YL3KfdySsev4alMRxDCi1J_-1Y"
+  }
+}

@@ -1,67 +1,77 @@
-# Connecting GitHub Account to Vercel
+# Connecting GitHub to Your Vercel Account
 
-Based on the error screen, you need to specifically connect the @superman32432432 GitHub account to your Vercel project.
+This guide will help you connect your GitHub repository to your actual Vercel account (pdarleyjr).
 
-## Detailed Steps
+## Your Vercel Account Information
 
-1. **Log out of any current GitHub accounts in your browser**
-   - Go to GitHub.com
-   - Click your profile picture in the top right
-   - Select "Sign out"
+Based on the screenshot you provided:
+- Username: pdarleyjr
+- Email: pdarleyjr@gmail.com
+- Default team: peter-darleys-projects
+- Vercel ID: PQHcHxa3h9JZhvCCCwBCdh
 
-2. **Log in to GitHub as @superman32432432**
-   - Go to GitHub.com
-   - Sign in using the credentials for the @superman32432432 account
-   - Make sure you're logged in as this specific account
+## Steps to Connect GitHub to Vercel
 
-3. **Return to Vercel and try connecting again**
-   - Go back to the Vercel connection page
-   - Click the "Connect @superman32432432" button
-   - You should now be prompted to authorize Vercel to access the correct GitHub account
+1. **Log in to Vercel**
+   - Go to [vercel.com](https://vercel.com) and log in with your account (pdarleyjr@gmail.com)
 
-4. **Authorize the connection**
-   - On the GitHub authorization page, click "Authorize Vercel"
-   - You may need to confirm your password
+2. **Go to Import Project**
+   - Click on "Add New..." → "Project"
+   - This will take you to the import page
 
-5. **Complete the team access request**
-   - After authorization, you should be redirected back to Vercel
-   - Follow any prompts to request access to the team
+3. **Connect to GitHub (if not already connected)**
+   - Click "Continue with GitHub"
+   - Authorize Vercel to access your GitHub repositories if prompted
+   - Make sure you're using your own GitHub account (pdarleyjr), not @superman32432432
 
-## If You Don't Have Access to @superman32432432
+4. **Import Your Repository**
+   - Once connected to GitHub, you should see a list of your repositories
+   - Find and select "pdarleyjr/chatbot-ui"
+   - Click "Import"
 
-If you don't have access to the @superman32432432 GitHub account:
+5. **Configure Project Settings**
+   - Framework Preset: Next.js
+   - Root Directory: ./
+   - Build Command: `npm run build`
+   - Output Directory: .next
+   - Install Command: `npm install`
 
-1. **Contact the account owner**
-   - Reach out to whoever owns this GitHub account
-   - Ask them to add your repository to their Vercel project
-   - Or ask them to transfer ownership of the Vercel project to your account
+6. **Environment Variables**
+   - Add the following environment variables from your .env file:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=https://uloayyhcpjmxljbhfysg.supabase.co
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsb2F5eWhjcGpteGxqYmhmeXNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDU4NDUsImV4cCI6MjA2MTAyMTg0NX0.qED8NMgurHVBxQYz3YL3KfdySsev4alMRxDCi1J_-1Y
+     SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVsb2F5eWhjcGpteGxqYmhmeXNnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NTQ0NTg0NSwiZXhwIjoyMDYxMDIxODQ1fQ.7gG5paXVbkH-QqKm6T3qOaUvKppQ9OM6PFrKGfwL-Yw
+     OPENAI_API_KEY=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
+     ```
 
-2. **Create a new Vercel project**
-   - If you can't access the @superman32432432 account, you may need to:
-     - Create a new Vercel project
-     - Connect it to your own GitHub account
-     - Deploy from scratch
+7. **Deploy**
+   - Click "Deploy" to start the deployment process
 
-## Alternative: Use Vercel CLI
+## Troubleshooting GitHub Connection Issues
 
-If you continue having issues with the GitHub connection, you can deploy using the Vercel CLI:
+If you encounter issues connecting your GitHub account:
 
-1. **Install Vercel CLI**
-   ```
-   npm install -g vercel
-   ```
+1. **Check GitHub Integration in Vercel Settings**
+   - Go to your Vercel account settings
+   - Navigate to "Integrations" → "Git"
+   - Ensure GitHub is properly connected to your account
+   - If not, click "Connect GitHub" and follow the prompts
 
-2. **Login to Vercel**
-   ```
-   vercel login
-   ```
+2. **Check Repository Access**
+   - Make sure your GitHub account has access to the repository
+   - If it's a private repository, ensure Vercel has been granted access to it
 
-3. **Deploy from your local directory**
-   ```
-   cd c:/Users/Peter Darley/Desktop/chatbot-ui
-   vercel
-   ```
+3. **Disconnect and Reconnect GitHub**
+   - If issues persist, try disconnecting GitHub from Vercel
+   - Then reconnect it by following the steps above
 
-4. **Follow the CLI prompts to configure your project**
+## Alternative: Continue Using Vercel CLI
 
-This approach bypasses the need for GitHub integration initially, though you'll want to set up proper integration later for continuous deployment.
+If you prefer to avoid GitHub integration entirely, you can continue using the Vercel CLI method that we've already set up:
+
+```powershell
+.\deploy-with-vercel-cli.ps1
+```
+
+This approach bypasses GitHub integration entirely and deploys directly from your local files.
