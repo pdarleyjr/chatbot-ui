@@ -1,0 +1,10 @@
+This is a placeholder for the model_quantized.onnx file.
+
+In a production environment, you would need to download the actual model file from Hugging Face or another source.
+
+The actual model file is a binary file that contains the weights for the gte-small model.
+
+You can download the model from:
+https://huggingface.co/Supabase/gte-small
+
+After downloading, rename this file to model_quantized.onnx (remove the .txt extension).

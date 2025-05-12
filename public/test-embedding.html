@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedding Model Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .loading {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        input {
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        li.success {
+            color: green;
+            background: none;
+            padding: 0;
+        }
+        li.error {
+            color: red;
+            background: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Embedding Model Test</h1>
+    
+    <h2>Model Files Status</h2>
+    <ul id="fileStatus">Loading...</ul>
+
+    <h2>Model File Contents</h2>
+    <div>
+        <select id="fileSelector">
+            <option value="/models/Supabase/gte-small/config.json">config.json</option>
+            <option value="/models/Supabase/gte-small/tokenizer.json">tokenizer.json</option>
+            <option value="/models/Supabase/gte-small/tokenizer_config.json">tokenizer_config.json</option>
+            <option value="/models/Supabase/gte-small/special_tokens_map.json">special_tokens_map.json</option>
+        </select>
+        <button id="loadFileBtn">Load File Contents</button>
+    </div>
+    <pre id="fileContents">Select a file and click "Load File Contents"</pre>
+
+    <script>
+        // List of files to check
+        const modelFiles = [
+            '/models/Supabase/gte-small/config.json',
+            '/models/Supabase/gte-small/tokenizer.json',
+            '/models/Supabase/gte-small/tokenizer_config.json',
+            '/models/Supabase/gte-small/special_tokens_map.json',
+            '/models/Supabase/gte-small/model_quantized.onnx'
+        ];
+
+        // Check if files exist
+        async function checkFiles() {
+            const fileStatusEl = document.getElementById('fileStatus');
+            fileStatusEl.innerHTML = '';
+            
+            for (const file of modelFiles) {
+                const li = document.createElement('li');
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    if (response.ok) {
+                        li.innerHTML = `✅ ${file} - Found`;
+                        li.className = 'success';
+                    } else {
+                        li.innerHTML = `❌ ${file} - Not found (${response.status})`;
+                        li.className = 'error';
+                    }
+                } catch (error) {
+                    li.innerHTML = `❌ ${file} - Error: ${error.message}`;
+                    li.className = 'error';
+                }
+                fileStatusEl.appendChild(li);
+            }
+        }
+
+        // Load file contents
+        async function loadFileContents(filePath) {
+            const fileContentsEl = document.getElementById('fileContents');
+            fileContentsEl.textContent = 'Loading...';
+            
+            try {
+                const response = await fetch(filePath);
+                if (response.ok) {
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        const json = await response.json();
+                        fileContentsEl.textContent = JSON.stringify(json, null, 2);
+                    } else {
+                        const text = await response.text();
+                        fileContentsEl.textContent = text.length > 10000 
+                            ? text.substring(0, 10000) + '... (truncated)'
+                            : text;
+                    }
+                } else {
+                    fileContentsEl.textContent = `Error loading file: ${response.status} ${response.statusText}`;
+                }
+            } catch (error) {
+                fileContentsEl.textContent = `Error loading file: ${error.message}`;
+            }
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', async () => {
+            await checkFiles();
+            
+            const loadFileBtn = document.getElementById('loadFileBtn');
+            const fileSelector = document.getElementById('fileSelector');
+            
+            loadFileBtn.addEventListener('click', () => {
+                loadFileContents(fileSelector.value);
+            });
+        });
+    </script>
+</body>
+</html>
