@@ -109,9 +109,9 @@ Deno.serve(async (req) => {
       })}`
     );
   }
-return new Response(null, {
-  status: 204,
-  headers
-});
-  );
+  
+  return new Response(null, {
+    status: 204,
+    headers
+  });
 });
