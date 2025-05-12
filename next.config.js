@@ -3,6 +3,8 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  // Disable source maps in production to avoid 404 errors
+  productionBrowserSourceMaps: false,
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

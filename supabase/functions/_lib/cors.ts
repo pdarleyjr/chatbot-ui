@@ -6,9 +6,10 @@
  * responses and actual (GET/POST/etc) responses.
  */
 export const corsHeaders = {
+  // Include both wildcard and specific Vercel domain
   'Access-Control-Allow-Origin': '*',          // allow any origin for production
-  'Access-Control-Allow-Methods': 'OPTIONS, POST, GET, PUT',        // allowed methods
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', // specific headers
+  'Access-Control-Allow-Methods': 'OPTIONS, POST, GET, PUT, DELETE, PATCH',  // allowed methods
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-auth', // specific headers
   'Access-Control-Expose-Headers': '*',                             // expose all headers
   'Access-Control-Max-Age': '86400',                                // cache preflight for 24 hours
   'Access-Control-Allow-Credentials': 'true',                       // allow credentials
