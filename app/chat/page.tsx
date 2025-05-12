@@ -6,7 +6,7 @@ import { usePipeline } from '@/lib/hooks/use-pipeline';
 import { cn } from '@/lib/utils';
 import { Database } from '@/supabase/functions/_lib/database';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
-import { useChat } from 'ai/react';
+import { useChat, Message } from 'ai/react';
 
 export default function ChatPage() {
   const supabase = createClientComponentClient<Database>();
@@ -18,7 +18,7 @@ export default function ChatPage() {
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } =
     useChat({
-      api: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/chat`,
+      api: `/api/chat`,
     });
 
   const isReady = !!generateEmbedding;
@@ -27,7 +27,7 @@ export default function ChatPage() {
     <div className="max-w-6xl flex flex-col items-center w-full h-full">
       <div className="flex flex-col w-full gap-6 grow my-2 sm:my-10 p-4 sm:p-8 sm:border rounded-sm overflow-y-auto">
         <div className="border-slate-400 rounded-lg flex flex-col justify-start gap-4 pr-2 grow overflow-y-scroll">
-          {messages.map(({ id, role, content }) => (
+          {messages.map(({ id, role, content }: Message) => (
             <div
               key={id}
               className={cn(
