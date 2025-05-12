@@ -1,0 +1,7 @@
+# Ignore source maps
+**/*.js.map
+**/*.map
+
+# Ignore React DevTools files
+**/installHook.js
+**/react_devtools_backend_compact.js
