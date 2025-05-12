@@ -1,0 +1,41 @@
+name: Enforce Main Branch
+
+on:
+  push:
+    branches:
+      - '*'
+      - '!main'  # Don't run on main branch pushes
+
+jobs:
+  redirect-to-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history for all branches
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+
+      - name: Merge to main
+        run: |
+          # Get the current branch name
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "Current branch: $BRANCH_NAME"
+          
+          # Checkout main (create if it doesn't exist)
+          git checkout main || git checkout -b main
+          
+          # Merge the current branch into main
+          git merge $BRANCH_NAME --no-edit
+          
+          # Push to main
+          git push origin main
+          
+          # Delete the branch if it's not main
+          if [ "$BRANCH_NAME" != "main" ]; then
+            git push origin --delete $BRANCH_NAME
+          fi
