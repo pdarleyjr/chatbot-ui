@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Files Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Model Files Test</h1>
+    <p>This page tests if the model files are being served correctly.</p>
+    
+    <h2>Test Results:</h2>
+    <div id="results"></div>
+
+    <script>
+        const modelFiles = [
+            '/models/Supabase/gte-small/config.json',
+            '/models/Supabase/gte-small/tokenizer.json',
+            '/models/Supabase/gte-small/tokenizer_config.json',
+            '/models/Supabase/gte-small/special_tokens_map.json',
+            '/models/Supabase/gte-small/model_quantized.onnx'
+        ];
+
+        const resultsDiv = document.getElementById('results');
+
+        async function testFile(url) {
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    return { success: true, status: response.status, statusText: response.statusText };
+                } else {
+                    return { success: false, status: response.status, statusText: response.statusText };
+                }
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function runTests() {
+            for (const file of modelFiles) {
+                const result = await testFile(file);
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result ' + (result.success ? 'success' : 'error');
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `✅ ${file}: Successfully loaded (${result.status} ${result.statusText})`;
+                } else if (result.status) {
+                    resultDiv.innerHTML = `❌ ${file}: Failed to load (${result.status} ${result.statusText})`;
+                } else {
+                    resultDiv.innerHTML = `❌ ${file}: Failed to load (${result.error})`;
+                }
+                
+                resultsDiv.appendChild(resultDiv);
+            }
+        }
+
+        runTests();
+    </script>
+</body>
+</html>
