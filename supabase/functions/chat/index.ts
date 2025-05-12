@@ -18,31 +18,33 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return handleCors();
   }
+  
+  // Set CORS headers for all responses
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+    ...corsHeaders
+  });
   if (!supabaseUrl || !supabaseAnonKey) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({
-          error: 'Missing environment variables.',
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({
+        error: 'Missing environment variables.',
+      }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
   const authorization = req.headers.get('Authorization');
 
   if (!authorization) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({ error: `No authorization header passed` }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({ error: `No authorization header passed` }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
@@ -74,17 +76,15 @@ Deno.serve(async (req) => {
     console.error('Error in search_documents:', matchError);
     console.error('Error details:', JSON.stringify(matchError));
 
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({
-          error: 'There was an error reading your documents, please try again.',
-          details: matchError
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({
+        error: 'There was an error reading your documents, please try again.',
+        details: matchError
+      }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
@@ -121,15 +121,35 @@ Deno.serve(async (req) => {
       ...messages,
     ];
 
-  const completionStream = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: completionMessages,
-    max_tokens: 1024,
-    temperature: 0,
-    stream: true,
-  });
+  try {
+    const completionStream = await openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: completionMessages,
+      max_tokens: 1024,
+      temperature: 0,
+      stream: true,
+    });
+const stream = OpenAIStream(completionStream);
+const streamResponse = new StreamingTextResponse(stream);
 
-  const stream = OpenAIStream(completionStream);
-  const response = new StreamingTextResponse(stream);
-  return addCorsHeaders(response);
+// Add CORS headers to the streaming response
+Object.entries(corsHeaders).forEach(([key, value]) => {
+  streamResponse.headers.set(key, value);
+});
+
+return streamResponse;
+} catch (error) {
+console.error('OpenAI API error:', error);
+return new Response(
+  JSON.stringify({
+    error: 'Error generating completion',
+    details: error instanceof Error ? error.message : String(error)
+  }),
+  {
+    status: 500,
+    headers
+  }
+);
+}
+  }
 });

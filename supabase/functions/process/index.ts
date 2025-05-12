@@ -11,31 +11,34 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return handleCors();
   }
+  
+  // Set CORS headers for all responses
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+    ...corsHeaders
+  });
+  
   if (!supabaseUrl || !supabaseAnonKey) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({
-          error: 'Missing environment variables.',
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({
+        error: 'Missing environment variables.',
+      }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
   const authorization = req.headers.get('Authorization');
 
   if (!authorization) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({ error: `No authorization header passed` }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({ error: `No authorization header passed` }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
@@ -59,31 +62,27 @@ Deno.serve(async (req) => {
     .single();
 
   if (!document?.storage_object_path) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({ error: 'Failed to find uploaded document' }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({ error: 'Failed to find uploaded document' }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
   const { data: file } = await supabase.storage
     .from('files')
     .download(document.storage_object_path);
-
-  if (!file) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({ error: 'Failed to download storage object' }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
-    );
+if (!file) {
+  return new Response(
+    JSON.stringify({ error: 'Failed to download storage object' }),
+    {
+      status: 500,
+      headers
+    }
+  );
+}
   }
 
   const fileContents = await file.text();
@@ -98,14 +97,12 @@ Deno.serve(async (req) => {
 
   if (error) {
     console.error(error);
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({ error: 'Failed to save document sections' }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({ error: 'Failed to save document sections' }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
@@ -113,10 +110,8 @@ Deno.serve(async (req) => {
     `Saved ${processedMd.sections.length} sections for file '${document.name}'`
   );
 
-  return addCorsHeaders(
-    new Response(null, {
-      status: 204,
-      headers: { 'Content-Type': 'application/json' },
-    })
-  );
+  return new Response(null, {
+    status: 204,
+    headers
+  });
 });

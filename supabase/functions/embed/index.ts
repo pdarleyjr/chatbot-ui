@@ -15,31 +15,34 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return handleCors();
   }
+  
+  // Set CORS headers for all responses
+  const headers = new Headers({
+    'Content-Type': 'application/json',
+    ...corsHeaders
+  });
+  
   if (!supabaseUrl || !supabaseAnonKey) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({
-          error: 'Missing environment variables.',
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({
+        error: 'Missing environment variables.',
+      }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
   const authorization = req.headers.get('Authorization');
 
   if (!authorization) {
-    return addCorsHeaders(
-      new Response(
-        JSON.stringify({ error: `No authorization header passed` }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      )
+    return new Response(
+      JSON.stringify({ error: `No authorization header passed` }),
+      {
+        status: 500,
+        headers
+      }
     );
   }
 
@@ -63,12 +66,10 @@ Deno.serve(async (req) => {
     .is(embeddingColumn, null);
 
   if (selectError) {
-    return addCorsHeaders(
-      new Response(JSON.stringify({ error: selectError }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      })
-    );
+    return new Response(JSON.stringify({ error: selectError }), {
+      status: 500,
+      headers
+    });
   }
 
   for (const row of rows) {
@@ -108,11 +109,9 @@ Deno.serve(async (req) => {
       })}`
     );
   }
-
-  return addCorsHeaders(
-    new Response(null, {
-      status: 204,
-      headers: { 'Content-Type': 'application/json' },
-    })
+return new Response(null, {
+  status: 204,
+  headers
+});
   );
 });
