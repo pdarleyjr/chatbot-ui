@@ -58,20 +58,27 @@ Deno.serve(async (req) => {
   });
 
   const { messages, embedding } = await req.json();
+  
+  console.log('Received embedding:', embedding.slice(0, 20) + '...');
 
+  console.log('Calling search_documents function...');
   const { data: documents, error: matchError } = await supabase
     .rpc('search_documents', {
       query_vector: embedding,
       match_limit: 5,
     });
+  
+  console.log('search_documents result:', documents ? documents.length : 0, 'documents found');
 
   if (matchError) {
-    console.error(matchError);
+    console.error('Error in search_documents:', matchError);
+    console.error('Error details:', JSON.stringify(matchError));
 
     return addCorsHeaders(
       new Response(
         JSON.stringify({
           error: 'There was an error reading your documents, please try again.',
+          details: matchError
         }),
         {
           status: 500,

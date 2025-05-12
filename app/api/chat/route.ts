@@ -26,6 +26,8 @@ export async function POST(req: NextRequest) {
     // Forward the request to the Supabase function
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     console.log(`Forwarding request to ${supabaseUrl}/functions/v1/chat`);
+    console.log('Messages count:', messages.length);
+    console.log('Embedding length:', embedding ? embedding.length : 'undefined');
     
     const response = await fetch(`${supabaseUrl}/functions/v1/chat`, {
       method: 'POST',
@@ -35,6 +37,8 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({ messages, embedding }),
     });
+    
+    console.log('Supabase function response status:', response.status);
     
     // Check if the response is ok
     if (!response.ok) {
@@ -69,13 +73,15 @@ export async function POST(req: NextRequest) {
         }
       },
     });
-
+    
     // Return the response with the same headers
     return new Response(stream, {
       headers: {
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
+        'Transfer-Encoding': 'chunked',
+        'X-Content-Type-Options': 'nosniff',
       },
     });
   } catch (error) {
